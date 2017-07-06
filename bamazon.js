@@ -29,7 +29,7 @@ function startQuery() {
 		if(answer.startOptions === "Buy") {
 			createArray();
 		} else if (answer.startOptions === "Sell") {
-			console.log("Feature Not Available Yet...");
+			sellItem();
 		} else {
 			process.exit();
 		}
@@ -86,14 +86,83 @@ function createArray() {
 				}
 			}
 
-			if (chosenItem.stock_quantity > parseInt(answer.quantity)) {
-				newStock = chosenItem.stock_quantity - parseInt(answer.quantity);
-				
-				console.log(newStock);
+			if (chosenItem.stock_quantity >= parseInt(answer.quantity)) {
+				var newStock = chosenItem.stock_quantity - parseInt(answer.quantity);
+				connection.query(
+					"UPDATE products SET ? WHERE ?",
+					[
+						{
+							stock_quantity: newStock
+						},
+						{
+							product_name: answer.products	
+						}
+					],
+					function(error) {
+						if (error) throw err;
+						console.log("Order Placed Successfully!");
+						process.exit();
+					}
+				);
 			} else {
-				console.log("There is not enough!");
+				console.log("There is not enough of that item! Please try again.");
+				setTimeout(createArray, 3000);
 			}
 		});
+	});
+}
+
+function sellItem() {
+	inquirer.prompt([
+		{
+			name: "productName",
+			type: "input",
+			message: "What product are you selling?"
+		},
+		{
+			name: "departmentName",
+			type: "input",
+			message: "What department would this item fall under?"
+		},
+		{
+			name: "price",
+			type: "input",
+			message: "What would you like to sell your item for?",
+			validate: function(value) {
+				if (isNaN(value) === false) {
+					return true;
+				}
+				return false;
+			}
+		},
+		{
+			name: "stock",
+			type: "input",
+			message: "How many do you have to sell?",
+			validate: function(value) {
+				if (isNaN(value) === false) {
+					return true;
+				}
+				return false;
+			}
+		}
+	]).then(function(answer) {
+		var itemID = Math.floor(Math.random()*900000) + 100000;
+		connection.query(
+			"INSERT INTO products SET ?",
+			{
+				item_id: itemID,
+				product_name: answer.productName,
+				department_name: answer.departmentName,
+				price: answer.price,
+				stock_quantity: answer.stock
+			},
+			function(err) {
+				if (err) throw err;
+				console.log("Item Added Successfully!");
+				process.exit();
+			}
+		);
 	});
 }
 	
