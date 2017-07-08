@@ -1,5 +1,5 @@
 USE bamazon;
 
-UPDATE products SET stock_quantity = 85 WHERE product_name = 'Racing Chair';
+UPDATE products SET stock_quantity = 155 WHERE product_name = 'Pork Butt';
 
 SELECT * FROM products;

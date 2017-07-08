@@ -1,5 +1,6 @@
 let inquirer = require('inquirer');
 let mySQL = require('mysql');
+require('console.table');
 
 let choicesArr = [];
 
@@ -42,17 +43,8 @@ function createArray() {
 		console.log("Current Items Available:");
 		for (let i = 0; i < results.length; i++) {
 			choicesArr.push(results[i]);
-
-			console.log(
-				"=====================================" + "\n" + 
-				"Item #:" + choicesArr[i].item_id + "\n" +
-				"Product:" + choicesArr[i].product_name + "\n" +
-				"Price: $" + choicesArr[i].price + "\n" +
-				"Current Stock:" + choicesArr[i].stock_quantity + "\n" +
-				"====================================="
-			);
 		}
-
+		console.table(choicesArr);
 
 		inquirer.prompt([
 			{
@@ -100,7 +92,11 @@ function createArray() {
 					],
 					function(error) {
 						if (error) throw err;
-						console.log("Order Placed Successfully!");
+						let quantityChosen = parseInt(answer.quantity);
+						let parsePrice = parseInt(chosenItem.price);
+						let realTotal = quantityChosen * parsePrice;
+						console.log("Order Placed Successfully! \n" + 
+							"Your total is $" + realTotal);
 						process.exit();
 					}
 				);
