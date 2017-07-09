@@ -1,5 +1,6 @@
 const inquirer = require('inquirer');
 const mySQL = require('mysql');
+const Table = require('cli-table');
 
 let choicesArr = [];
 
@@ -39,22 +40,23 @@ function startQuery() {
 function createArray() {
 	connection.query("SELECT * FROM products", function(err, results) {
 		if (err) throw err;
-		console.log("Current Items Available:");
+		var table = new Table({
+			head: ['Item ID', 'Product Name', 'Department', 'Price', 'Stock']
+		});
 		for (let i = 0; i < results.length; i++) {
 			choicesArr.push(results[i]);
 
-			console.log(`
-				==============================
-				Item ID: ${choicesArr[i].item_id}
-				Product Name: ${choicesArr[i].product_name}
-				Department Name: ${choicesArr[i].department_name}
-				Price: ${choicesArr[i].price}
-				Stock Quantity: ${choicesArr[i].stock_quantity}
-				==============================
-				`
+			table.push(
+				[
+					choicesArr[i].item_id,
+					choicesArr[i].product_name,
+					choicesArr[i].department_name,
+					choicesArr[i].price,
+					choicesArr[i].stock_quantity
+				]
 			);
 		}
-
+		console.log(table.toString());
 		inquirer.prompt([
 			{
 				message: "Which product would you like to buy?",
