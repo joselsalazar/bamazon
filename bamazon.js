@@ -1,6 +1,5 @@
-let inquirer = require('inquirer');
-let mySQL = require('mysql');
-require('console.table');
+const inquirer = require('inquirer');
+const mySQL = require('mysql');
 
 let choicesArr = [];
 
@@ -43,8 +42,18 @@ function createArray() {
 		console.log("Current Items Available:");
 		for (let i = 0; i < results.length; i++) {
 			choicesArr.push(results[i]);
+
+			console.log(`
+				==============================
+				Item ID: ${choicesArr[i].item_id}
+				Product Name: ${choicesArr[i].product_name}
+				Department Name: ${choicesArr[i].department_name}
+				Price: ${choicesArr[i].price}
+				Stock Quantity: ${choicesArr[i].stock_quantity}
+				==============================
+				`
+			);
 		}
-		console.table(choicesArr);
 
 		inquirer.prompt([
 			{
